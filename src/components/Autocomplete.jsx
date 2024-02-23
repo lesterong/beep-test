@@ -2,7 +2,8 @@ import {useState} from "react";
 import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
-const Autocomplete = () => {
+// eslint-disable-next-line react/prop-types
+const Autocomplete = ({ disabled = false }) => {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
@@ -81,6 +82,7 @@ const Autocomplete = () => {
         ref={setReferenceElement}
         onBlur={() => setTimeout(() => setIsShown(false), 100)}
         onKeyDown={handleKeyDown}
+        disabled={disabled}
       />
       {isShown && (
         <div className="shadow-sm w-72 bg-white py-2 rounded-xl" ref={setPopperElement}
