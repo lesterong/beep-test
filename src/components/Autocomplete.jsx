@@ -1,9 +1,9 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({ label, description, disabled = false }) => {
+const Autocomplete = ({dataSource = [], label, description, disabled = false}) => {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
@@ -30,8 +30,7 @@ const Autocomplete = ({ label, description, disabled = false }) => {
     setIsShown(false);
   }
 
-  const data = ["Apple", "Orange", "Pear"]
-  const dataToShow = data.filter(d => d.toLowerCase().includes(query.toLowerCase()))
+  const dataToShow = dataSource.filter(d => d.toLowerCase().includes(query.toLowerCase()))
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -41,10 +40,12 @@ const Autocomplete = ({ label, description, disabled = false }) => {
 
     if (e.key === 'Escape') {
       setIsShown(false);
+      referenceElement.blur();
       return;
     }
 
     if (e.key === 'ArrowDown' && !isShown) {
+      e.preventDefault();
       setIsShown(true);
       return;
     }
@@ -52,10 +53,12 @@ const Autocomplete = ({ label, description, disabled = false }) => {
     let nextIndex = selectedIndex;
 
     if (e.key === 'ArrowDown' && isShown) {
+      e.preventDefault();
       nextIndex = (selectedIndex + 1) % dataToShow.length;
     }
 
     if (e.key === 'ArrowUp' && isShown) {
+      e.preventDefault();
       nextIndex = selectedIndex - 1;
 
       if (nextIndex < 0) {
@@ -74,6 +77,8 @@ const Autocomplete = ({ label, description, disabled = false }) => {
 
   return (
     <>
+      {isShown && <div className="absolute top-0 left-0 w-dvw h-dvh bg-transparent"
+                       onClick={() => setIsShown(false)}></div>}
       <div className="flex flex-col gap-1">
         <label className="font-medium" htmlFor={label}>{label}</label>
         {description && (<span className="text-gray-500 text-sm w-72">{description}</span>)}
@@ -83,7 +88,6 @@ const Autocomplete = ({ label, description, disabled = false }) => {
           onChange={handleSearchInput}
           onFocus={() => setIsShown(true)}
           ref={setReferenceElement}
-          onBlur={() => setTimeout(() => setIsShown(false), 100)}
           onKeyDown={handleKeyDown}
           disabled={disabled}
           id={label}
@@ -102,6 +106,7 @@ const Autocomplete = ({ label, description, disabled = false }) => {
                 key={d}
                 onMouseOver={() => setSelectedIndex(i)}
                 onClick={() => {
+                  referenceElement.focus();
                   handleSelect(d)
                 }}
               >
