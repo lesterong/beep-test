@@ -3,7 +3,7 @@ import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({ disabled = false }) => {
+const Autocomplete = ({ label, disabled = false }) => {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
@@ -74,16 +74,20 @@ const Autocomplete = ({ disabled = false }) => {
 
   return (
     <>
-      <input
-        className="border border-gray-200/50 w-72 px-3 py-3.5 outline-4 outline-blue-600 outline-offset-2 rounded-xl"
-        type="text" value={query} placeholder="Search..."
-        onChange={handleSearchInput}
-        onFocus={() => setIsShown(true)}
-        ref={setReferenceElement}
-        onBlur={() => setTimeout(() => setIsShown(false), 100)}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-      />
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium" htmlFor={label}>{label}</label>
+        <input
+          className="border border-gray-200/50 w-72 px-3 py-3.5 outline-4 outline-blue-600 outline-offset-2 rounded-xl"
+          type="text" value={query} placeholder="Search..."
+          onChange={handleSearchInput}
+          onFocus={() => setIsShown(true)}
+          ref={setReferenceElement}
+          onBlur={() => setTimeout(() => setIsShown(false), 100)}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          id={label}
+        />
+      </div>
       {isShown && (
         <div className="shadow-sm w-72 bg-white py-2 rounded-xl" ref={setPopperElement}
              style={styles.popper} {...attributes.popper}>
