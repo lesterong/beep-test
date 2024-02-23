@@ -20,13 +20,24 @@ const Autocomplete = () => {
   });
 
   const handleSearchInput = (e) => {
+    setIsShown(true)
     setQuery(e.target.value)
+  }
+
+  const handleSelect = (d) => {
+    setQuery(d);
+    setIsShown(false);
   }
 
   const data = ["Apple", "Orange", "Pear"]
   const dataToShow = data.filter(d => d.toLowerCase().includes(query.toLowerCase()))
 
   const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSelect(dataToShow[selectedIndex])
+      return;
+    }
+
     let nextIndex = selectedIndex;
 
     if (e.key === 'ArrowDown') {
@@ -65,6 +76,7 @@ const Autocomplete = () => {
                 className={clsx("px-3 py-1 block w-full text-left transition-colors duration-100 hover:bg-blue-100 focus-visible:bg-blue-100 focus-visible:outline-none", {'bg-blue-100': dataToShow[selectedIndex] === d})}
                 key={d}
                 tabIndex={-1}
+                onClick={() => handleSelect(d)}
               >
                 {d}
               </button>
