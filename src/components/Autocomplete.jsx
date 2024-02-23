@@ -52,6 +52,11 @@ const Autocomplete = () => {
       }
     }
 
+    if (dataToShow.length === 0) {
+      setSelectedIndex(-1);
+      return;
+    }
+
     setSelectedIndex(nextIndex);
   };
 
@@ -70,6 +75,9 @@ const Autocomplete = () => {
       {isShown && (
         <div className="shadow-sm w-72 bg-white py-2 rounded-xl" ref={setPopperElement}
              style={styles.popper} {...attributes.popper}>
+          {dataToShow.length === 0 && (
+            <div className="px-3 py-1 text-gray-600">Nothing found.</div>
+          )}
           {dataToShow.map(d => {
             return (
               <button
