@@ -30,6 +30,7 @@ const Autocomplete = () => {
         type="text" value={query} placeholder="Search..."
         onChange={handleSearchInput}
         onFocus={() => setIsShown(true)}
+        onBlur={() => setIsShown(false)}
         ref={setReferenceElement}
       />
       {isShown && (
