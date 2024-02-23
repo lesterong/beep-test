@@ -38,13 +38,23 @@ const Autocomplete = () => {
       return;
     }
 
+    if (e.key === 'Escape') {
+      setIsShown(false);
+      return;
+    }
+
+    if (e.key === 'ArrowDown' && !isShown) {
+      setIsShown(true);
+      return;
+    }
+
     let nextIndex = selectedIndex;
 
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' && isShown) {
       nextIndex = (selectedIndex + 1) % dataToShow.length;
     }
 
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'ArrowUp' && isShown) {
       nextIndex = selectedIndex - 1;
 
       if (nextIndex < 0) {
@@ -52,7 +62,7 @@ const Autocomplete = () => {
       }
     }
 
-    if (dataToShow.length === 0) {
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && dataToShow.length === 0) {
       setSelectedIndex(-1);
       return;
     }
@@ -68,7 +78,6 @@ const Autocomplete = () => {
         type="text" value={query} placeholder="Search..."
         onChange={handleSearchInput}
         onFocus={() => setIsShown(true)}
-        onBlur={() => setIsShown(false)}
         ref={setReferenceElement}
         onKeyDown={handleKeyDown}
       />
@@ -78,13 +87,15 @@ const Autocomplete = () => {
           {dataToShow.length === 0 && (
             <div className="px-3 py-1 text-gray-600">Nothing found.</div>
           )}
-          {dataToShow.map(d => {
+          {dataToShow.map((d, i) => {
             return (
               <button
-                className={clsx("px-3 py-1 block w-full text-left transition-colors duration-100 hover:bg-blue-100 focus-visible:bg-blue-100 focus-visible:outline-none", {'bg-blue-100': dataToShow[selectedIndex] === d})}
+                className={clsx("px-3 py-1 block w-full text-left transition-colors duration-100 focus-visible:outline-none", {'bg-blue-100': dataToShow[selectedIndex] === d})}
                 key={d}
-                tabIndex={-1}
-                onClick={() => handleSelect(d)}
+                onMouseOver={() => setSelectedIndex(i)}
+                onClick={() => {
+                  handleSelect(d)
+                }}
               >
                 {d}
               </button>
