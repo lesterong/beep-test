@@ -79,6 +79,7 @@ const Autocomplete = () => {
         onChange={handleSearchInput}
         onFocus={() => setIsShown(true)}
         ref={setReferenceElement}
+        onBlur={() => setTimeout(() => setIsShown(false), 100)}
         onKeyDown={handleKeyDown}
       />
       {isShown && (
