@@ -3,7 +3,7 @@ import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({ label, disabled = false }) => {
+const Autocomplete = ({ label, description, disabled = false }) => {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
@@ -75,7 +75,8 @@ const Autocomplete = ({ label, disabled = false }) => {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium" htmlFor={label}>{label}</label>
+        <label className="font-medium" htmlFor={label}>{label}</label>
+        {description && (<span className="text-gray-500 text-sm w-72">{description}</span>)}
         <input
           className="border border-gray-200/50 w-72 px-3 py-3.5 outline-4 outline-blue-600 outline-offset-2 rounded-xl"
           type="text" value={query} placeholder="Search..."
