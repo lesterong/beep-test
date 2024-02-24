@@ -14,9 +14,17 @@ import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({dataSource = [], label, description, transformDisplay = (str) => str, async = false, disabled = false}) => {
+const Autocomplete = ({
+                        dataSource = [],
+                        label,
+                        description,
+                        transformDisplay = (str) => str,
+                        async = false,
+                        disabled = false
+                      }) => {
   const [query, setQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false);
+  const [dataToShow, setDataToShow] = useState(dataSource.filter(d => d.toLowerCase().includes(query.toLowerCase())))
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
@@ -33,16 +41,23 @@ const Autocomplete = ({dataSource = [], label, description, transformDisplay = (
   });
 
   const handleSearchInput = (e) => {
-    setIsShown(true)
+    setIsLoading(true)
+    setIsShown(false)
     setQuery(e.target.value)
+    new Promise((res) => {
+      const updatedResults = [...dataSource.filter(d => d.toLowerCase().includes(e.target.value.toLowerCase()))];
+      return res(updatedResults);
+    }).then((res) => {
+      setDataToShow(res);
+      setIsShown(true);
+      setIsLoading(false)
+    })
   }
 
   const handleSelect = (d) => {
     setQuery(transformDisplay(d));
     setIsShown(false);
   }
-
-  const dataToShow = dataSource.filter(d => d.toLowerCase().includes(query.toLowerCase()))
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -108,7 +123,7 @@ const Autocomplete = ({dataSource = [], label, description, transformDisplay = (
             disabled={disabled}
             id={label}
           />
-          {async && <span className="absolute right-3 top-1/2 -translate-y-1/2">
+          {async && isLoading && <span className="absolute right-3 top-1/2 -translate-y-1/2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 animate-spin" fill="currentColor"
                  viewBox="0 0 16 16">
               <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
