@@ -1,9 +1,19 @@
-import {useRef, useState} from "react";
+/**
+ * Autocomplete Component
+ *
+ * @param {Array} dataSource The options to display, filling this up will create a synchronous autocomplete component.
+ * @param {string} label A label to display for the component.
+ * @param {string} description A description to display below the label.
+ * @param {function} transformDisplay Change how the value is displayed.
+ * @param {boolean} disabled To specify if the field is enabled.
+ */
+
+import {useState} from "react";
 import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({dataSource = [], label, description, disabled = false}) => {
+const Autocomplete = ({dataSource = [], label, description, transformDisplay = (str) => str, disabled = false}) => {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
@@ -26,7 +36,7 @@ const Autocomplete = ({dataSource = [], label, description, disabled = false}) =
   }
 
   const handleSelect = (d) => {
-    setQuery(d);
+    setQuery(transformDisplay(d));
     setIsShown(false);
   }
 
@@ -113,7 +123,7 @@ const Autocomplete = ({dataSource = [], label, description, disabled = false}) =
                   handleSelect(d)
                 }}
               >
-                {d}
+                {transformDisplay(d)}
               </button>
             )
           })}
