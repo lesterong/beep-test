@@ -34,6 +34,9 @@ const Autocomplete = ({dataSource = [], label, description, disabled = false}) =
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
+      if (selectedIndex > dataToShow.length) {
+        return;
+      }
       handleSelect(dataToShow[selectedIndex])
       return;
     }
