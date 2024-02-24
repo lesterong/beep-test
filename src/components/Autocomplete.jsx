@@ -1,10 +1,11 @@
 /**
  * Autocomplete Component
  *
- * @param {Array} dataSource The options to display, filling this up will create a synchronous autocomplete component.
+ * @param {Array<String>} dataSource The options to display.
  * @param {string} label A label to display for the component.
  * @param {string} description A description to display below the label.
  * @param {function} transformDisplay Change how the value is displayed.
+ * @param {boolean} async To specify if the field searches synchronously or asynchronously.
  * @param {boolean} disabled To specify if the field is enabled.
  */
 
@@ -13,8 +14,9 @@ import {usePopper} from 'react-popper';
 import {clsx} from 'clsx';
 
 // eslint-disable-next-line react/prop-types
-const Autocomplete = ({dataSource = [], label, description, transformDisplay = (str) => str, disabled = false}) => {
+const Autocomplete = ({dataSource = [], label, description, transformDisplay = (str) => str, async = false, disabled = false}) => {
   const [query, setQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
@@ -90,24 +92,34 @@ const Autocomplete = ({dataSource = [], label, description, transformDisplay = (
 
   return (
     <>
-      {isShown && <div className="absolute top-0 left-0 w-dvw h-dvh bg-transparent"
+      {isShown && <div className="absolute top-0 left-0 w-dvw h-dvh bg-transparent z-10"
                        onClick={() => setIsShown(false)}></div>}
       <div className="flex flex-col gap-1">
         <label className="font-medium" htmlFor={label}>{label}</label>
         {description && (<span className="text-gray-500 text-sm w-72">{description}</span>)}
-        <input
-          className="border border-gray-200/50 w-72 px-3 py-3.5 outline-4 outline-blue-600 outline-offset-2 rounded-xl"
-          type="text" value={query} placeholder="Search..."
-          onChange={handleSearchInput}
-          onFocus={() => setIsShown(true)}
-          ref={setReferenceElement}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          id={label}
-        />
+        <div className="relative w-72">
+          <input
+            className="border border-gray-200/50 w-72 px-3 py-3.5 outline-4 outline-blue-600 outline-offset-2 rounded-xl"
+            type="text" value={query} placeholder="Search..."
+            onChange={handleSearchInput}
+            onFocus={() => setIsShown(true)}
+            ref={setReferenceElement}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            id={label}
+          />
+          {async && <span className="absolute right-3 top-1/2 -translate-y-1/2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 animate-spin" fill="currentColor"
+                 viewBox="0 0 16 16">
+              <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+              <path
+                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+          </span>}
+        </div>
       </div>
       {isShown && (
-        <div className="shadow-sm w-72 bg-white py-2 rounded-xl" ref={setPopperElement}
+        <div className="shadow-sm w-72 bg-white py-2 rounded-xl z-20" ref={setPopperElement}
              style={styles.popper} {...attributes.popper}>
           {dataToShow.length === 0 && (
             <div className="px-3 py-1 text-gray-600">Nothing found.</div>

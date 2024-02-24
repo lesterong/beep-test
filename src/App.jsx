@@ -10,6 +10,7 @@ function App() {
                     description="This is an autocomplete field with a description!"></Autocomplete>
       <Autocomplete dataSource={dataArray} transformDisplay={(str) => str.toUpperCase()} label="Enabled"
                     description="This autocomplete field transforms all values into uppercase!"></Autocomplete>
+      <Autocomplete dataSource={dataArray} label="Enabled" async description="This autocomplete field searches asynchronously."></Autocomplete>
     </main>
   )
 }
